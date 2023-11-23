@@ -10,15 +10,39 @@ public class Enemy : MonoBehaviour
     public float health = 10f; // Hit points needed to destroy enemy
     public int score = 100; // Points earned for destroying enemy
 
-    // Start is called before the first frame update
-    void Start()
+    private BoundsCheck boundsCheck;
+    void Awake()
     {
-        
+        boundsCheck = GetComponent<BoundsCheck>();
+    }
+
+    public Vector3 pos
+    {
+        get
+        {
+            return this.transform.position;
+        }
+        set
+        {
+            this.transform.position = value;
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        Move();
+
+        if(boundsCheck.LocIs(BoundsCheck.eScreenLocs.offDown))
+        {
+            Destroy(gameObject);
+        }
+    }
+
+    public virtual void Move()
+    {
+        Vector3 tempPos = pos;
+        tempPos.y -= speed * Time.deltaTime;
+        pos = tempPos;
     }
 }
