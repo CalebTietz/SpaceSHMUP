@@ -5,16 +5,16 @@ m_ProjectFiles:
     m_ContentTrackingEnabled: 1
     m_ModificationDate:
       serializedVersion: 2
-      ticks: 638362647853144798
-    m_Hash: 1164529822
+      ticks: 638363642659509256
+    m_Hash: 1525443029
   m_LockFileStatus:
     m_FilePath: D:/CSG-3023/SpaceSHMUP/SpaceSHMUP/Packages/packages-lock.json
     m_PathExists: 1
     m_ContentTrackingEnabled: 1
     m_ModificationDate:
       serializedVersion: 2
-      ticks: 638362648223773775
-    m_Hash: 1381362156
+      ticks: 638363642659509256
+    m_Hash: 683342763
 m_EmbeddedPackageManifests:
   m_ManifestsStatus: {}
 m_LocalPackages:
