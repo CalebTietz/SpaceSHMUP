@@ -10,7 +10,7 @@ public class Enemy : MonoBehaviour
     public float health = 10f; // Hit points needed to destroy enemy
     public int score = 100; // Points earned for destroying enemy
 
-    private BoundsCheck boundsCheck;
+    protected BoundsCheck boundsCheck;
     void Awake()
     {
         boundsCheck = GetComponent<BoundsCheck>();
@@ -44,5 +44,20 @@ public class Enemy : MonoBehaviour
         Vector3 tempPos = pos;
         tempPos.y -= speed * Time.deltaTime;
         pos = tempPos;
+    }
+
+    void OnCollisionEnter(Collision collision)
+    {
+        GameObject otherGO = collision.gameObject;
+        
+        if(otherGO.GetComponent<ProjectileHero>() != null)
+        {
+            Destroy(otherGO);
+            Destroy(gameObject);
+        }
+        else
+        {
+            Debug.Log("Enemy hit by non-ProjectileHero: " + otherGO.name);
+        }
     }
 }
