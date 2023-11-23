@@ -11,6 +11,7 @@ public class Main : MonoBehaviour
     public GameObject[] prefabEnemies;
     public float enemySpawnsPerSec = 0.5f;
     public float enemyInsetDefault = 1.5f;
+    public float gameRestartDelay = 2f;
 
     private BoundsCheck boundsCheck;
 
@@ -44,6 +45,21 @@ public class Main : MonoBehaviour
         go.transform.position = pos;
 
         Invoke(nameof(SpawnEnemy), 1f / enemySpawnsPerSec);
+    }
+
+    void DelayedRestart()
+    {
+        Invoke(nameof(Restart), gameRestartDelay);
+    }
+
+    void Restart()
+    {
+        SceneManager.LoadScene("__Scene_0");
+    }
+
+    static public void HERO_DIED()
+    {
+        S.DelayedRestart();
     }
 
 }

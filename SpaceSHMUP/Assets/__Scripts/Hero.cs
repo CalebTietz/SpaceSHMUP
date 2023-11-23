@@ -10,9 +10,14 @@ public class Hero : MonoBehaviour
     public float speed = 30f;
     public float rollMult = -45f;
     public float pitchMult = 30f;
+    public GameObject projectilePrefab;
+    public float projectileSpeed = 40f;
 
-    [Header("Dynamic")] [Range(0f, 4f)]
-    public int shieldLevel = 1;
+    [Header("Dynamic")]
+    [Range(0f, 4f)]
+    private int _shieldLevel = 1;
+    [Tooltip("This field holds a reference to the last triggered GameObject")]
+    private GameObject lastTriggerGo = null;
 
 
     void Awake()
@@ -39,5 +44,55 @@ public class Hero : MonoBehaviour
         transform.position = pos;
 
         transform.rotation = Quaternion.Euler(vAxis * pitchMult, hAxis * rollMult, 0);
+
+        if(Input.GetKeyDown(KeyCode.Space))
+        {
+            TempFire();
+        }
+    }
+
+    void TempFire()
+    {
+        GameObject projGO = Instantiate<GameObject>(projectilePrefab);
+        projGO.transform.position = transform.position;
+        Rigidbody rb = projGO.GetComponent<Rigidbody>();
+        rb.velocity = Vector3.up * projectileSpeed;
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        Transform rootT = other.gameObject.transform.root;
+        GameObject go = rootT.gameObject;
+
+        if (go == lastTriggerGo) return;
+        lastTriggerGo = go;
+
+        Enemy enemy = go.GetComponent<Enemy>();
+        if(enemy != null)
+        {
+            shieldLevel--;
+            Destroy(go);
+        }
+        else
+        {
+            Debug.LogWarning("Shield trigger hit by non-Enemy: " + go.name);
+        }
+    }
+
+    public int shieldLevel
+    {
+        get
+        {
+            return _shieldLevel;
+        }
+        private set
+        {
+            _shieldLevel = Mathf.Min(value, 4);
+            if(value < 0)
+            {
+                Destroy(this.gameObject);
+                Main.HERO_DIED();
+            }
+        }
     }
 }
