@@ -12,6 +12,7 @@ public class Hero : MonoBehaviour
     public float pitchMult = 30f;
     public GameObject projectilePrefab;
     public float projectileSpeed = 40f;
+    public Weapon[] weapons;
 
     [Header("Dynamic")]
     [Range(0f, 4f)]
@@ -33,6 +34,9 @@ public class Hero : MonoBehaviour
         {
             Debug.LogError("Hero.Awake() - Attempted to assign second Hero.S!");
         }
+
+        ClearWeapons();
+        weapons[0].SetType(eWeaponType.blaster);
     }
 
     // Update is called once per frame
@@ -63,15 +67,48 @@ public class Hero : MonoBehaviour
         lastTriggerGo = go;
 
         Enemy enemy = go.GetComponent<Enemy>();
+        PowerUp pUp = go.GetComponent<PowerUp>();
         if(enemy != null)
         {
             shieldLevel--;
             Destroy(go);
         }
+        else if(pUp != null)
+        {
+            AbsorbPowerUp(pUp);
+        }
         else
         {
             Debug.LogWarning("Shield trigger hit by non-Enemy: " + go.name);
         }
+    }
+
+    public void AbsorbPowerUp(PowerUp pUp)
+    {
+        Debug.Log("Absorbed PowerUp: " + pUp.type);
+        switch(pUp.type)
+        {
+            case eWeaponType.shield:
+                shieldLevel++;
+                break;
+
+            default:
+                if(pUp.type == weapons[0].type)
+                {
+                    Weapon weap = GetEmptyWeaponSlot();
+                    if(weap != null)
+                    {
+                        weap.SetType(pUp.type);
+                    }
+                }
+                else
+                {
+                    ClearWeapons();
+                    weapons[0].SetType(pUp.type);
+                }
+                break;
+        }
+        pUp.AbsorbedBy(this.gameObject);
     }
 
     public int shieldLevel
@@ -88,6 +125,26 @@ public class Hero : MonoBehaviour
                 Destroy(this.gameObject);
                 Main.HERO_DIED();
             }
+        }
+    }
+
+    Weapon GetEmptyWeaponSlot()
+    {
+        for(int i = 0; i < weapons.Length; i++)
+        {
+            if(weapons[i].type == eWeaponType.none)
+            {
+                return weapons[i];
+            }
+        }
+        return null;
+    }
+
+    void ClearWeapons()
+    {
+        foreach(Weapon w in weapons)
+        {
+            w.SetType(eWeaponType.none);
         }
     }
 }
