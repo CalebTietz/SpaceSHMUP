@@ -19,6 +19,9 @@ public class Hero : MonoBehaviour
     [Tooltip("This field holds a reference to the last triggered GameObject")]
     private GameObject lastTriggerGo = null;
 
+    public delegate void WeaponFireDelegate();
+    public event WeaponFireDelegate fireEvent;
+
 
     void Awake()
     {
@@ -45,18 +48,10 @@ public class Hero : MonoBehaviour
 
         transform.rotation = Quaternion.Euler(vAxis * pitchMult, hAxis * rollMult, 0);
 
-        if(Input.GetKeyDown(KeyCode.Space))
+        if(Input.GetAxis("Jump") == 1 && fireEvent != null)
         {
-            TempFire();
+            fireEvent();
         }
-    }
-
-    void TempFire()
-    {
-        GameObject projGO = Instantiate<GameObject>(projectilePrefab);
-        projGO.transform.position = transform.position;
-        Rigidbody rb = projGO.GetComponent<Rigidbody>();
-        rb.velocity = Vector3.up * projectileSpeed;
     }
 
     void OnTriggerEnter(Collider other)

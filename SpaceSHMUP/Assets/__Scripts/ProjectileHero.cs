@@ -6,10 +6,24 @@ using UnityEngine;
 public class ProjectileHero : MonoBehaviour
 {
     private BoundsCheck boundsCheck;
+    private Renderer rend;
+
+    [Header("Dynamic")]
+    public Rigidbody rb;
+    [SerializeField] private eWeaponType _type;
+
+    // public property masks private field _type
+    public eWeaponType type
+    {
+        get { return _type; }
+        set { SetType(value); }
+    }
 
     void Awake()
     {
         boundsCheck = GetComponent<BoundsCheck>();
+        rend = GetComponent<Renderer>();
+        rb = GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
@@ -19,5 +33,18 @@ public class ProjectileHero : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
+
+    public void SetType(eWeaponType eType)
+    {
+        _type = eType;
+        WeaponDefinition def = Main.GET_WEAPON_DEFINITION(_type);
+        rend.material.color = def.projectileColor;
+    }
+
+    public Vector3 vel
+    {
+        get { return rb.velocity; }
+        set { rb.velocity = value; }
     }
 }
